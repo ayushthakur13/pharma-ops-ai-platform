@@ -60,6 +60,10 @@ Deliverables:
 - Sync Service contracts.
 - Analytics Service contracts.
 - API Gateway pass-through routing map.
+- Draft contract document: docs/api-contracts.md
+
+Status:
+- In progress (draft v1 created).
 
 Acceptance criteria:
 - Each endpoint has a clear schema.
@@ -82,7 +86,7 @@ Next expansion tasks (later):
 - Better error codes and pagination.
 - Add structured failure handling for invalid payloads, missing entities, and DB constraint violations.
 
-## Phase 3 - Auth Service (Next)
+## Phase 3 - Auth Service (Completed, baseline)
 
 Objectives:
 - Implement user registration.
@@ -103,7 +107,10 @@ Acceptance criteria:
 - Protected route returns current user context.
 - Role checks are enforced for role-restricted operations.
 
-## Phase 4 - Billing Service
+Status:
+- Completed minimal baseline (register, login, me endpoints).
+
+## Phase 4 - Billing Service (Completed, baseline)
 
 Objectives:
 - Create prescriptions.
@@ -125,7 +132,10 @@ Acceptance criteria:
 - Audit log entries are recorded for key billing actions.
 - Service returns clear failure responses for inventory API errors/timeouts and records those failures.
 
-## Phase 5 - AI Service (Read-only, controlled)
+Status:
+- Completed minimal baseline (prescriptions + transactions + inventory deduction integration + strict failure handling).
+
+## Phase 5 - AI Service (Read-only, controlled) (Next)
 
 Objectives:
 - Provide replenishment recommendations.
