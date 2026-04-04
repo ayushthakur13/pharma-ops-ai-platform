@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict, Field
 class PrescriptionCreate(BaseModel):
     patient_id: str = Field(min_length=1, max_length=100)
     store_id: int
-    created_by_user_id: int
     status: str = Field(default="created", min_length=1, max_length=50)
 
 
@@ -29,7 +28,6 @@ class TransactionCreate(BaseModel):
     quantity: int = Field(gt=0)
     payment_method: str = Field(min_length=1, max_length=50)
     total_amount: Decimal = Field(gt=0)
-    created_by_user_id: int
 
 
 class InventoryDeductionSummary(BaseModel):

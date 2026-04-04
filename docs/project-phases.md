@@ -63,7 +63,7 @@ Deliverables:
 - Draft contract document: docs/api-contracts.md
 
 Status:
-- In progress (draft v1 created).
+- Completed (v1 baseline finalized and implemented for Auth/Billing/Inventory-aligned behavior).
 
 Acceptance criteria:
 - Each endpoint has a clear schema.
@@ -79,6 +79,9 @@ Objectives:
 
 Status:
 - Completed minimal baseline.
+
+Implemented security update:
+- OAuth2 JWT authentication is enforced on Inventory endpoints.
 
 Next expansion tasks (later):
 - Add explicit stock update endpoint (PUT /api/inventory/stock/{inventory_id}) with audit logging.
@@ -108,7 +111,7 @@ Acceptance criteria:
 - Role checks are enforced for role-restricted operations.
 
 Status:
-- Completed minimal baseline (register, login, me endpoints).
+- Completed minimal baseline (register, login, me endpoints) with JWT auth and role-aware flows.
 
 ## Phase 4 - Billing Service (Completed, baseline)
 
@@ -133,7 +136,7 @@ Acceptance criteria:
 - Service returns clear failure responses for inventory API errors/timeouts and records those failures.
 
 Status:
-- Completed minimal baseline (prescriptions + transactions + inventory deduction integration + strict failure handling).
+- Completed minimal baseline (prescriptions + transactions + inventory deduction integration + strict failure handling + RBAC enforcement on write endpoints).
 
 ## Phase 5 - AI Service (Read-only, controlled) (Next)
 
@@ -246,12 +249,9 @@ Final acceptance criteria:
 
 ## Suggested Execution Sequence from Today
 
-1. Finalize Phase 1.5 API contracts.
-2. Implement Auth Service.
-3. Implement Billing Service.
-4. Implement AI Service (mock first).
-5. Implement Sync Service.
-6. Implement Analytics Service.
-7. Implement API Gateway pass-through.
-8. Implement frontend minimal UI.
-9. Perform hardening and final acceptance checks.
+1. Implement AI Service (mock first).
+2. Implement Sync Service.
+3. Implement Analytics Service.
+4. Implement API Gateway pass-through.
+5. Implement frontend minimal UI.
+6. Perform hardening and final acceptance checks.

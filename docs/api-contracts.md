@@ -49,6 +49,14 @@ HTTP code conventions:
 - 500: internal service error
 - 502/503/504: upstream dependency failure
 
+Service health conventions:
+- Each service exposes `GET /health` outside `/api` for liveness checks.
+- Response shape:
+{
+  "status": "ok",
+  "service": "<service-name>"
+}
+
 RBAC conventions:
 - Super Admin: platform-level privileged operations
 - Manager: store/regional operational control
@@ -165,6 +173,16 @@ Response 200:
 Failures:
 - 401 invalid/missing token
 
+### 3.4 GET /health
+Purpose:
+- Service liveness probe.
+
+Response 200:
+{
+  "status": "ok",
+  "service": "auth-service"
+}
+
 ## 4. Billing Service Contracts
 
 Service prefix:
@@ -172,6 +190,7 @@ Service prefix:
 
 Dependency:
 - Calls Inventory Service /api/inventory/deduct
+- Forwards caller JWT to Inventory Service as Bearer token.
 
 ### 4.1 POST /api/billing/prescriptions
 Purpose:
@@ -246,6 +265,7 @@ Response 201:
 Failure handling:
 - If inventory deduct fails, return 409 or 502 and do not create transaction row.
 - On upstream timeout, return 504 with dependency context.
+- On upstream unavailable, return 503 with dependency context.
 
 ### 4.4 GET /api/billing/transactions/{id}
 Response 200:
@@ -257,6 +277,16 @@ Response 200:
   "payment_method": "cash",
   "total_amount": 99.98,
   "created_at": "2026-04-04T12:20:00Z"
+}
+
+### 4.5 GET /health
+Purpose:
+- Service liveness probe.
+
+Response 200:
+{
+  "status": "ok",
+  "service": "billing-service"
 }
 
 ## 5. AI Service Contracts (Read-only)
@@ -428,7 +458,30 @@ Failure behavior:
 - Upstream unavailable -> 503 service_unavailable
 - Preserve downstream error code when pass-through is possible
 
-## 9. Contract Completion Checklist
+## 9. Inventory Service Security Contract (Implemented Baseline)
+
+Service prefix:
+- /api/inventory
+
+Auth:
+- JWT Bearer token required for all Inventory endpoints.
+
+Endpoints covered:
+- POST /api/inventory/products
+- GET /api/inventory/products/{id}
+- POST /api/inventory/stock
+- GET /api/inventory/stock/{store_id}
+- POST /api/inventory/batches
+- POST /api/inventory/deduct
+
+Liveness endpoint:
+- GET /health
+
+Failure behavior:
+- 401 for missing/invalid token
+- Domain errors unchanged (404/409 and business validation responses)
+
+## 10. Contract Completion Checklist
 
 - All endpoints in this document have request and response definitions.
 - Service ownership boundaries are explicit.

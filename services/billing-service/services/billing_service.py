@@ -19,14 +19,14 @@ class BillingService:
         self.inventory_base_url = inventory_base_url.rstrip("/")
         self.inventory_timeout_seconds = inventory_timeout_seconds
 
-    def create_prescription(self, payload: PrescriptionCreate) -> Prescription:
+    def create_prescription(self, payload: PrescriptionCreate, user_id: int) -> Prescription:
         self._ensure_store_exists(payload.store_id)
-        self._ensure_user_exists(payload.created_by_user_id)
+        self._ensure_user_exists(user_id)
 
         prescription = Prescription(
             patient_id=payload.patient_id,
             store_id=payload.store_id,
-            created_by_user_id=payload.created_by_user_id,
+            created_by_user_id=user_id,
             status=payload.status,
         )
         self.db.add(prescription)
@@ -36,7 +36,7 @@ class BillingService:
             entity_type="prescription",
             entity_id=str(prescription.id),
             action="create",
-            user_id=payload.created_by_user_id,
+            user_id=user_id,
             new_value={
                 "patient_id": payload.patient_id,
                 "store_id": payload.store_id,
@@ -54,7 +54,7 @@ class BillingService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prescription not found")
         return prescription
 
-    def create_transaction(self, payload: TransactionCreate) -> tuple[Transaction, int | None]:
+    def create_transaction(self, payload: TransactionCreate, user_id: int, auth_token: str | None = None) -> tuple[Transaction, int | None]:
         prescription = self.db.get(Prescription, payload.prescription_id)
         if not prescription:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prescription not found")
@@ -62,14 +62,15 @@ class BillingService:
         if prescription.store_id != payload.store_id:
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Prescription store mismatch")
 
-        self._ensure_user_exists(payload.created_by_user_id)
+        self._ensure_user_exists(user_id)
 
         deduction_result = self._deduct_inventory_or_fail(
             product_id=payload.product_id,
             store_id=payload.store_id,
             quantity=payload.quantity,
-            created_by_user_id=payload.created_by_user_id,
+            created_by_user_id=user_id,
             prescription_id=payload.prescription_id,
+            auth_token=auth_token,
         )
 
         transaction = Transaction(
@@ -77,7 +78,7 @@ class BillingService:
             store_id=payload.store_id,
             total_amount=payload.total_amount,
             payment_method=payload.payment_method,
-            created_by_user_id=payload.created_by_user_id,
+            created_by_user_id=user_id,
         )
         self.db.add(transaction)
         self.db.flush()
@@ -86,7 +87,7 @@ class BillingService:
             entity_type="transaction",
             entity_id=str(transaction.id),
             action="create",
-            user_id=payload.created_by_user_id,
+            user_id=user_id,
             new_value={
                 "prescription_id": payload.prescription_id,
                 "store_id": payload.store_id,
@@ -113,6 +114,7 @@ class BillingService:
         quantity: int,
         created_by_user_id: int,
         prescription_id: int,
+        auth_token: str | None = None,
     ) -> dict[str, Any]:
         url = f"{self.inventory_base_url}/api/inventory/deduct"
         payload = {
@@ -120,10 +122,13 @@ class BillingService:
             "store_id": store_id,
             "quantity": quantity,
         }
+        headers = {}
+        if auth_token:
+            headers["Authorization"] = f"Bearer {auth_token}"
 
         try:
             with httpx.Client(timeout=self.inventory_timeout_seconds) as client:
-                response = client.post(url, json=payload)
+                response = client.post(url, json=payload, headers=headers)
         except httpx.TimeoutException:
             self._log_audit(
                 entity_type="transaction",

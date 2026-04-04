@@ -169,10 +169,13 @@ Auth Service
 
 Inventory Service
 - Owns products, stock, batches
+- Enforces JWT authentication on all endpoints
 
 Billing Service
 - Owns transactions, prescriptions
 - Calls Inventory Service to update stock
+- Enforces RBAC for sensitive writes (Pharmacist or Manager)
+- Forwards caller JWT token during Inventory deduction calls
 
 AI Service
 - Read-only access to analytics data
