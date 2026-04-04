@@ -115,11 +115,11 @@ This system provides a scalable, offline-capable, AI-augmented solution to strea
 
 #### Replenishment Recommendations
 - Rule-based thresholds + demand trends  
-- AI-generated explanations  
+- AI-generated explanations (Groq) as optional layer, not decision maker  
 
 #### Anomaly Detection
 - Statistical detection of unusual patterns  
-- AI-based contextual insights  
+- AI-based contextual insights with deterministic fallback  
 
 #### Conversational Querying
 - Natural language → SQL queries  
@@ -135,6 +135,7 @@ This system provides a scalable, offline-capable, AI-augmented solution to strea
 - Output validation and filtering  
 - Confidence scoring  
 - Full traceability of AI decisions  
+- Input/output/source logging (`rule_based` vs `ai`) for every AI endpoint call
 
 ---
 
@@ -180,6 +181,11 @@ Billing Service
 AI Service
 - Read-only access to analytics data
 - Never directly mutates core data
+
+Sync Service
+- Stores offline operations in local SQLite queue
+- Replays unsynced operations to central service APIs
+- Keeps failed operations retryable with replay metadata
 
 ## Data Ownership
 

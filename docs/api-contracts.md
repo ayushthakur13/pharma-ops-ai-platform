@@ -297,6 +297,17 @@ Service prefix:
 Constraints:
 - Never mutates core domain tables.
 - Must provide deterministic fallback when model call fails.
+- AI model output is explanation-only; decision logic remains rule-based.
+
+Auth:
+- JWT required.
+- Allowed roles: Super Admin, Manager, Pharmacist.
+
+Guardrails:
+- Predefined prompt templates only.
+- Output length and safety validation before returning.
+- Fallback to rule-based explanation on provider failure or invalid model output.
+- Audit logging includes input, output, and source (`rule_based` or `ai`).
 
 ### 5.1 POST /api/ai/recommendations/replenishment
 Request body:
@@ -340,10 +351,44 @@ Response 200:
   "source": "rule_based_or_ai"
 }
 
+### 5.3 POST /api/ai/query
+Purpose:
+- Conversational operational insights using safe intent mapping.
+
+Request body:
+{
+  "question": "Give me store performance summary",
+  "store_id": 1
+}
+
+Response 200:
+{
+  "answer": "Store 1 has a 0% stock out rate, 4 transactions, and $459.91 in revenue.",
+  "intent": "store_performance",
+  "source": "rule_based_or_ai",
+  "data": {
+    "stores": [
+      {
+        "store_id": 1,
+        "stock_out_rate": 0.0,
+        "transaction_count": 4,
+        "revenue": 459.91
+      }
+    ]
+  }
+}
+
+Guardrail note:
+- No arbitrary SQL execution. Query intent is classified into approved analytics intents only.
+
 ## 6. Sync Service Contracts
 
 Service prefix:
 - /api/sync
+
+Auth:
+- JWT required on all endpoints.
+- Trigger endpoint role restriction: Super Admin or Manager.
 
 Persistence:
 - Local SQLite operations table used for queue simulation.
@@ -390,11 +435,18 @@ Response 200:
 Failure handling:
 - Failed sync operations remain unsynced for retry.
 - Each failure includes error message and upstream status capture in logs.
+- Replay stores retry metadata in local queue (retry_count, upstream_status, last_error).
 
 ## 7. Analytics Service Contracts (Read-only)
 
 Service prefix:
 - /api/analytics
+
+Auth:
+- JWT required on all endpoints.
+
+Liveness endpoint:
+- GET /health
 
 ### 7.1 GET /api/analytics/stock-aging?store_id=1
 Response 200:

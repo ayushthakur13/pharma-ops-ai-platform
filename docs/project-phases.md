@@ -138,7 +138,7 @@ Acceptance criteria:
 Status:
 - Completed minimal baseline (prescriptions + transactions + inventory deduction integration + strict failure handling + RBAC enforcement on write endpoints).
 
-## Phase 5 - AI Service (Read-only, controlled) (Next)
+## Phase 5 - AI Service (Read-only, controlled) (Completed, baseline)
 
 Objectives:
 - Provide replenishment recommendations.
@@ -153,14 +153,20 @@ Constraints:
 - Use prompt templates.
 - Validate all outputs.
 - Log AI decisions.
-- Use mock outputs first, then optional Groq integration.
+- Use Groq API integration as explanation layer and natural language insight.
 - On model/provider failure, return deterministic rule-based fallback output.
 
 Acceptance criteria:
 - Returns valid structured suggestions.
 - Includes fallback rule-based output path.
 
-## Phase 6 - Sync Service (After Billing)
+Status:
+- Completed baseline (rule-based recommendations and anomaly detection implemented).
+- Groq integrated as explanation-only layer with guardrails and deterministic fallback.
+- AI input/output/source logging implemented in audit_logs.
+- Conversational query endpoint implemented with safe intent mapping and guardrails.
+
+## Phase 6 - Sync Service (After Billing) (Completed, baseline)
 
 Objectives:
 - Simulate offline operation queue in SQLite.
@@ -177,7 +183,13 @@ Acceptance criteria:
 - Failed operations remain retryable.
 - Sync failures are logged with enough context for replay/debug.
 
-## Phase 7 - Analytics Service
+Status:
+- Completed baseline (SQLite offline queue + replay trigger + status endpoint).
+- Successful replay marks operations as synced with synced_at timestamp.
+- Failure path preserves unsynced operations with retry_count, upstream_status, and last_error.
+- Replay failures are audit logged with payload and error context.
+
+## Phase 7 - Analytics Service (Completed, baseline)
 
 Objectives:
 - Build read-only analytical views from core data.
@@ -190,6 +202,11 @@ Minimal endpoints:
 Acceptance criteria:
 - Endpoints return valid structured metrics.
 - No writes to transactional tables.
+
+Status:
+- Completed baseline with read-only analytics endpoints.
+- Implemented: stock-aging, demand-trends, and store-performance.
+- RBAC enforced for Manager and Super Admin roles.
 
 ## Phase 8 - API Gateway (Pass-through first)
 
@@ -249,9 +266,6 @@ Final acceptance criteria:
 
 ## Suggested Execution Sequence from Today
 
-1. Implement AI Service (mock first).
-2. Implement Sync Service.
-3. Implement Analytics Service.
-4. Implement API Gateway pass-through.
-5. Implement frontend minimal UI.
-6. Perform hardening and final acceptance checks.
+1. Implement API Gateway pass-through.
+2. Implement frontend minimal UI.
+3. Perform hardening and final acceptance checks.

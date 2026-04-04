@@ -6,3 +6,4 @@ __pycache__/
 alembic/__pycache__/
 .vscode/
 .DS_Store
+*.db
