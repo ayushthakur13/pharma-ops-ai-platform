@@ -235,7 +235,7 @@ Status:
 - Implemented request-size limit enforcement and safe request/response header forwarding.
 - Implemented upstream failure mapping (504 gateway_timeout, 503 service_unavailable) while preserving downstream status codes when available.
 
-## Phase 9 - Frontend (Last)
+## Phase 9 - Frontend (Last) (Completed, baseline)
 
 Objectives:
 - Minimal functional UI for end-to-end operations.
@@ -250,6 +250,15 @@ Initial screens:
 Acceptance criteria:
 - Mobile-friendly layout works.
 - Can execute key operational flow from UI.
+
+Status:
+- Completed baseline Next.js App Router frontend with mobile-first responsive layouts.
+- Implemented login + JWT auth flow via API Gateway (`/api/auth/login`, `/api/auth/me`).
+- Implemented role-based protected routes and role-aware navigation/actions.
+- Implemented pages: dashboard, inventory, billing, analytics, and AI insights using gateway APIs only.
+- Added offline indicator and lightweight offline queue simulation for write actions on network failure.
+- Demo note: self-registration supports role selection for assignment demonstration.
+- Production note: role assignment must be admin-controlled and removed from open registration.
 
 ## Phase 10 - Hardening and Final Acceptance (Completed, backend baseline)
 
@@ -278,11 +287,11 @@ Status:
 - Backend acceptance tests added and passing (`tests/test_backend_phase10.py`).
 
 Notes:
-- Frontend implementation remains Phase 9 scope and is intentionally excluded from backend Phase 10 completion.
+- Phase 10 completion here reflects backend hardening baseline; frontend delivery is tracked in Phase 9.
 
-## Backend Completion Snapshot
+## Implementation Completion Snapshot
 
-Included in the backend baseline:
+Included in the implemented baseline:
 - Database schema and shared backend foundation
 - Auth, Inventory, Billing, AI, Sync, Analytics, and API Gateway services
 - Shared request/error logging and runtime metrics on every backend service
@@ -290,12 +299,13 @@ Included in the backend baseline:
 - AI guardrails, audit logging, and deterministic fallback behavior
 - SQLite offline sync queue with replay and retry metadata
 - Backend verification tests for health, metrics, auth rejection, and gateway rate limiting
+- Frontend role-based routes and end-to-end operational flows through API Gateway
 
 Alignment verdict:
-- Backend implementation is aligned with the assignment at baseline level.
+- Overall implementation is aligned with the assignment requirements at submission baseline level.
 - The remaining gap is production-grade observability maturity beyond the current baseline.
 
-## Suggested Execution Sequence 
+## Suggested Execution Sequence
 
-1. Implement frontend minimal UI.
-2. Execute full end-to-end walkthrough including UI + backend using the acceptance runbook.
+1. Execute full end-to-end walkthrough including UI + backend flows.
+2. Expand observability from baseline metrics/logging to production-grade traces and dashboards if targeting production readiness.

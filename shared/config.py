@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     gateway_rate_limit_enabled: bool = True
     gateway_rate_limit_requests: int = 120
     gateway_rate_limit_window_seconds: int = 60
+    gateway_cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     model_config = SettingsConfigDict(
         env_file=str(ROOT_ENV_FILE),

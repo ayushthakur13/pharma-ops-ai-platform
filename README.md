@@ -70,6 +70,16 @@ This system provides a scalable, offline-capable, AI-augmented solution to strea
 - Next.js
 - TailwindCSS
 
+Runtime requirement (frontend):
+- Node.js >= 20.9.0 (required by Next.js 16)
+
+### Frontend Run (Implemented)
+- Frontend path: `frontend/`
+- Install: `cd frontend && npm install`
+- Dev server: `npm run dev`
+- Build: `npm run build`
+- Expected API Gateway base URL: `NEXT_PUBLIC_API_BASE_URL` (defaults to `http://127.0.0.1:8000`)
+
 ### Infrastructure (Planned)
 - Redis (caching, queues)
 - Message Queue (RabbitMQ)
@@ -85,6 +95,8 @@ This system provides a scalable, offline-capable, AI-augmented solution to strea
 ### 1. Authentication & Authorization
 - Role-based access control (Super Admin, Manager, Pharmacist, Staff)
 - JWT-based authentication
+- Demo note: registration currently allows role self-selection (including Super Admin) for assignment simplicity.
+- Production note: roles must be assigned by authorized administrators only.
 
 ---
 

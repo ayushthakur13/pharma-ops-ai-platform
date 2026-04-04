@@ -9,7 +9,11 @@ Scope:
 
 Out of scope for this phase:
 - Full OpenAPI generation per service.
-- Frontend contracts.
+
+Frontend contract status:
+- Frontend is implemented and aligned to these contracts.
+- API-facing frontend types are maintained in `frontend/types/api.ts`.
+- Frontend routes consume gateway paths under `/api/*` only.
 
 ## 1. Global API Rules
 
