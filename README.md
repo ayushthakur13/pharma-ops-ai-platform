@@ -187,6 +187,12 @@ Sync Service
 - Replays unsynced operations to central service APIs
 - Keeps failed operations retryable with replay metadata
 
+API Gateway
+- Thin pass-through routing across all service prefixes
+- Centralized JWT validation for all non-auth service routes
+- Enforces request-size limit and safe header forwarding
+- Maps upstream timeout/unavailable errors to 504/503
+
 ## Data Ownership
 
 - Inventory data → Inventory Service (source of truth)
@@ -324,5 +330,10 @@ This project is designed to demonstrate:
 
 This project focuses on system design and engineering depth.  
 Not all components are production-complete but are implemented as realistic, extensible modules.
+
+## Current Status
+
+- Phase tracker and backend completion snapshot: [docs/project-phases.md](docs/project-phases.md)
+- API contracts: [docs/api-contracts.md](docs/api-contracts.md)
 
 ---

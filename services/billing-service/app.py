@@ -9,10 +9,12 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
 from routes.billing import router as billing_router
+from shared.observability import register_observability
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Billing Service", version="0.1.0")
+    register_observability(app, service_name="billing-service")
 
     @app.get("/health")
     def health() -> dict[str, str]:

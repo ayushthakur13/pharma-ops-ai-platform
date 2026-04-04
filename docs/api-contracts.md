@@ -487,6 +487,9 @@ RBAC:
 
 ## 8. API Gateway Routing Contract
 
+Status:
+- Implemented baseline pass-through gateway.
+
 Gateway prefix:
 - /api
 
@@ -498,16 +501,20 @@ Initial behavior:
   - /api/ai -> AI Service
   - /api/sync -> Sync Service
   - /api/analytics -> Analytics Service
+- Centralized JWT auth enforcement for all non-auth prefixes via Auth Service token validation (/api/auth/me).
 
 Protection requirements:
 - Request size limits enabled.
 - Safe header forwarding only.
 - Basic abuse protection hooks.
-- Rate limiting policy slots configured (enforce later phase).
+- Rate limiting enabled (configurable request/window controls).
 
 Failure behavior:
 - Upstream timeout -> 504 gateway_timeout
 - Upstream unavailable -> 503 service_unavailable
+- Auth validation timeout -> 504 auth_service_timeout
+- Auth validation unavailable -> 503 auth_service_unavailable
+- Missing/invalid token on non-auth routes -> 401 invalid_or_missing_token
 - Preserve downstream error code when pass-through is possible
 
 ## 9. Inventory Service Security Contract (Implemented Baseline)

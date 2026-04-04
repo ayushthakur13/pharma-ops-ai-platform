@@ -9,10 +9,12 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
 from routes.sync import router as sync_router
+from shared.observability import register_observability
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Sync Service", version="0.1.0")
+    register_observability(app, service_name="sync-service")
 
     @app.get("/health")
     def health() -> dict[str, str]:

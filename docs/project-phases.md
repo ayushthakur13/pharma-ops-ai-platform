@@ -208,7 +208,7 @@ Status:
 - Implemented: stock-aging, demand-trends, and store-performance.
 - RBAC enforced for Manager and Super Admin roles.
 
-## Phase 8 - API Gateway (Pass-through first)
+## Phase 8 - API Gateway (Pass-through first) (Completed, baseline)
 
 Objectives:
 - Route requests to service endpoints.
@@ -216,11 +216,10 @@ Objectives:
 
 Initial behavior:
 - Prefix-based pass-through routing.
-- No global auth enforcement in first cut.
+- Centralized JWT auth enforcement for all non-auth service prefixes.
 - Basic request-size limits and safe header forwarding.
 
 Later behavior:
-- Add centralized auth checks after Auth Service is stable.
 - Add rate limiting/throttling policies.
 - Add abuse protection controls (IP/user based protections and route-level guards).
 
@@ -228,6 +227,13 @@ Acceptance criteria:
 - All configured service routes forward correctly.
 - Error forwarding remains consistent.
 - Gateway protection controls are configured and observable in logs/metrics.
+
+Status:
+- Completed baseline with thin prefix-based pass-through routing.
+- Implemented service mappings for auth, inventory, billing, ai, sync, and analytics prefixes.
+- Implemented centralized token validation at gateway by verifying Bearer JWT via Auth Service for non-auth routes.
+- Implemented request-size limit enforcement and safe request/response header forwarding.
+- Implemented upstream failure mapping (504 gateway_timeout, 503 service_unavailable) while preserving downstream status codes when available.
 
 ## Phase 9 - Frontend (Last)
 
@@ -245,7 +251,7 @@ Acceptance criteria:
 - Mobile-friendly layout works.
 - Can execute key operational flow from UI.
 
-## Phase 10 - Hardening and Final Acceptance
+## Phase 10 - Hardening and Final Acceptance (Completed, backend baseline)
 
 Objectives:
 - Basic observability and reliability checks.
@@ -264,8 +270,32 @@ Final acceptance criteria:
 - Non-functional expectations are documented and addressed at baseline level.
 - Repository is runnable locally with clear startup sequence.
 
-## Suggested Execution Sequence from Today
+Status:
+- Completed backend baseline hardening implementation.
+- Request and error logging middleware implemented across all backend services and API Gateway.
+- `/metrics` endpoint added across all backend services and API Gateway for runtime request/error visibility.
+- API Gateway rate limiting enabled with configurable request/window controls.
+- Backend acceptance tests added and passing (`tests/test_backend_phase10.py`).
 
-1. Implement API Gateway pass-through.
-2. Implement frontend minimal UI.
-3. Perform hardening and final acceptance checks.
+Notes:
+- Frontend implementation remains Phase 9 scope and is intentionally excluded from backend Phase 10 completion.
+
+## Backend Completion Snapshot
+
+Included in the backend baseline:
+- Database schema and shared backend foundation
+- Auth, Inventory, Billing, AI, Sync, Analytics, and API Gateway services
+- Shared request/error logging and runtime metrics on every backend service
+- Gateway centralized JWT validation for non-auth routes and rate limiting controls
+- AI guardrails, audit logging, and deterministic fallback behavior
+- SQLite offline sync queue with replay and retry metadata
+- Backend verification tests for health, metrics, auth rejection, and gateway rate limiting
+
+Alignment verdict:
+- Backend implementation is aligned with the assignment at baseline level.
+- The remaining gap is production-grade observability maturity beyond the current baseline.
+
+## Suggested Execution Sequence 
+
+1. Implement frontend minimal UI.
+2. Execute full end-to-end walkthrough including UI + backend using the acceptance runbook.
